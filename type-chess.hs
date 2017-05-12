@@ -4,7 +4,6 @@
 
 module TypeChess where
 
-import Data.Kind ( Type )
 import Data.Singletons
 import Data.Singletons.Prelude
 import Data.Singletons.Prelude.List
@@ -32,12 +31,12 @@ type instance Apply (Place1 xs) b = Place xs b
 data Place2 :: ([Nat] ~> ignore ~> [[Nat]])
 type instance Apply (Place2) xs = Place1 xs
 
-type family FoldM ( f :: TyFun b (TyFun a [b] -> Type) -> Type) ( acc :: b ) ( over :: [a] ) :: [b] where
+type family FoldM ( f :: b ~> a ~> [b] ) ( acc :: b ) ( over :: [a] ) :: [b] where
   FoldM f acc '[] = '[ acc ]
   FoldM f acc ( x ': xs) =
     ConcatMap (FoldM1 f xs) (f @@ acc @@ x )
 
-data FoldM1 :: (TyFun b (TyFun a [b] -> Type) -> Type) -> [a] -> (b ~> [b])
+data FoldM1 :: ( b ~> a ~> [b] ) -> [a] -> ( b ~> [b] )
 type instance Apply (FoldM1 f xs ) acc = FoldM f acc xs
 
 type family Solutions :: [[Nat]] where
